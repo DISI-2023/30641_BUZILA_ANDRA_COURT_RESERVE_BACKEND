@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +30,9 @@ public class Location implements Serializable
 
     @Column(name = "courtsImage", nullable = false)
     private String courtsImage;
+
+    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL)
+    private List<Court> courts;
 
     //Constructor with id:
     public Location(UUID id, String address, int longitude, int latitude, String courtsImage) {
@@ -82,5 +86,11 @@ public class Location implements Serializable
     }
     public void setCourtsImage(String courtsImage) {
         this.courtsImage = courtsImage;
+    }
+    public List<Court> getCourts() {
+        return courts;
+    }
+    public void setCourts(List<Court> courts) {
+        this.courts = courts;
     }
 }
