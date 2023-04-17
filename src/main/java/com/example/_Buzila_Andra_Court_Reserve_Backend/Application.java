@@ -9,5 +9,8 @@ public class Application {
 
 		//Mesaj de runtime:
 		System.out.println("Project is running.");
+
+		//Test insert location in postman;
+		//Test insert court in postman;
 	}
 }

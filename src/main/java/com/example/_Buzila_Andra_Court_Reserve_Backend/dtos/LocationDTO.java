@@ -34,6 +34,16 @@ public class LocationDTO extends RepresentationModel<LocationDTO> {
         this.courtsImage = courtsImage;
     }
 
+    //Constructor with courts:
+    public LocationDTO(UUID id, String address, double longitude, double latitude, String courtsImage, List<Court> courts) {
+        this.id = id;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.courtsImage = courtsImage;
+        this.courts = courts;
+    }
+
     //Constructor without id:
     public LocationDTO(String address, int longitude, int latitude, String courtsImage) {
         this.address = address;
