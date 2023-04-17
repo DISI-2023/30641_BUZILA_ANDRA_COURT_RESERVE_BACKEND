@@ -19,4 +19,12 @@ public class Location implements Serializable {
     //@Type(type = "uuid-binary")
     @Type(type = "uuid-char")
     private UUID id;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }
