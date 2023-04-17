@@ -23,19 +23,22 @@ public class Location implements Serializable
     private String address;
 
     @Column(name = "longitude", nullable = false)
-    private int longitude;
+    private double longitude;
 
     @Column(name = "latitude", nullable = false)
-    private int latitude;
+    private double latitude;
 
     @Column(name = "courtsImage", nullable = false)
     private String courtsImage;
 
-    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Court> courts;
 
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private List<Tariff> tariffs;
+
     //Constructor with id:
-    public Location(UUID id, String address, int longitude, int latitude, String courtsImage) {
+    public Location(UUID id, String address, double longitude, double latitude, String courtsImage) {
         this.id = id;
         this.address = address;
         this.longitude = longitude;
@@ -44,7 +47,7 @@ public class Location implements Serializable
     }
 
     //Constructor without id:
-    public Location(String address, int longitude, int latitude, String courtsImage) {
+    public Location(String address, double longitude, double latitude, String courtsImage) {
         this.id = id;
         this.address = address;
         this.longitude = longitude;
@@ -69,16 +72,16 @@ public class Location implements Serializable
     public void setAddress(String address) {
         this.address = address;
     }
-    public int getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
-    public void setLongitude(int longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-    public int getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
-    public void setLatitude(int latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
     public String getCourtsImage() {
