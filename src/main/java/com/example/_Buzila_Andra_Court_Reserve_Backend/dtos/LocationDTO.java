@@ -1,44 +1,32 @@
-package com.example._Buzila_Andra_Court_Reserve_Backend.entities;
+package com.example._Buzila_Andra_Court_Reserve_Backend.dtos;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import javax.persistence.*;
-import java.io.Serializable;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
+import org.springframework.hateoas.RepresentationModel;
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-public class Location implements Serializable
-{
-    private static final long serialVersionUID = 1L;
+public class LocationDTO extends RepresentationModel<LocationDTO> {
 
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Type(type = "uuid-char")
     private UUID id;
 
-    //:, unique = true
-    @Column(name = "address", nullable = false)
+    @NotNull
     private String address;
 
-    @Column(name = "longitude", nullable = false)
+    @NotNull
     private double longitude;
 
-    @Column(name = "latitude", nullable = false)
+    @NotNull
     private double latitude;
 
-    @Column(name = "courtsImage", nullable = false)
+    @NotNull
     private String courtsImage;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Court> courts;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
-    private List<Tariff> tariffs;
-
     //Constructor with id:
-    public Location(UUID id, String address, double longitude, double latitude, String courtsImage) {
+    public LocationDTO(UUID id, String address, double longitude, double latitude, String courtsImage) {
         this.id = id;
         this.address = address;
         this.longitude = longitude;
@@ -47,8 +35,7 @@ public class Location implements Serializable
     }
 
     //Constructor without id:
-    public Location(String address, double longitude, double latitude, String courtsImage) {
-        this.id = id;
+    public LocationDTO(String address, int longitude, int latitude, String courtsImage) {
         this.address = address;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -56,10 +43,11 @@ public class Location implements Serializable
     }
 
     //Empty constructor:
-    public Location() {
+    public LocationDTO() {
     }
 
     //Getters and Setters:
+
     public UUID getId() {
         return id;
     }
@@ -95,5 +83,24 @@ public class Location implements Serializable
     }
     public void setCourts(List<Court> courts) {
         this.courts = courts;
+    }
+
+    //Equals:
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LocationDTO that = (LocationDTO) o;
+        return Objects.equals(address, that.address) &&
+                longitude == that.longitude &&
+                latitude == that.latitude &&
+                Objects.equals(courtsImage, that.courtsImage);
+    }
+
+    //Hash:
+    @Override
+    public int hashCode() {
+        return Objects.hash(address, longitude, latitude, courtsImage);
     }
 }

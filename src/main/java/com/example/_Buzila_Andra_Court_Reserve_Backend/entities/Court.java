@@ -17,31 +17,31 @@ public class Court implements Serializable
     @Type(type = "uuid-char")
     private UUID id;
 
-//    @Column(name = "location", nullable = false)
-//    private String location;
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
-
     @Column(name = "type", nullable = false)
     private String type;
 
     @Column(name = "name", nullable = false)
     private String name;
 
+    //    @Column(name = "location", nullable = false)
+    //    private String location;
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
+
     //Constructor with id:
-    public Court(UUID id, Location location, String type, String name) {
+    public Court(UUID id, String type, String name, Location location) {
         this.id = id;
-        this.location = location;
         this.type = type;
         this.name = name;
+        this.location = location;
     }
 
     //Constructor without id:
-    public Court(Location location, String type, String name) {
-        this.location = location;
+    public Court(String type, String name, Location location) {
         this.type = type;
         this.name = name;
+        this.location = location;
     }
 
     //Empty constructor:
@@ -55,12 +55,6 @@ public class Court implements Serializable
     public void setId(UUID id) {
         this.id = id;
     }
-    public Location getLocation() {
-        return location;
-    }
-    public void setLocation(Location location) {
-        this.location = location;
-    }
     public String getType() {
         return type;
     }
@@ -72,5 +66,11 @@ public class Court implements Serializable
     }
     public void setName(String name) {
         this.name = name;
+    }
+    public Location getLocation() {
+        return location;
+    }
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }
