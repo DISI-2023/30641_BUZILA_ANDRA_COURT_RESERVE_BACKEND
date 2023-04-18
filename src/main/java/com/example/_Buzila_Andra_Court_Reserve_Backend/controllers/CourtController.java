@@ -47,6 +47,6 @@ public class CourtController
     @PostMapping(value="/deleteCourt")
     public ResponseEntity<UUID> deleteCourt(@Valid @RequestBody DeleteCourtDTO court) {
         UUID deletedCourtID = courtService.delete(court.getId());
-        return new ResponseEntity<>(deletedCourtID, HttpStatus.CREATED);
+        return new ResponseEntity<>(deletedCourtID, HttpStatus.OK);
     }
 }
