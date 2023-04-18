@@ -57,4 +57,10 @@ public class CourtService
         //Return entity court:
         return courtOptional.get();
     }
+
+    public UUID delete(UUID courtId) {
+        courtRepository.deleteById(courtId);
+        LOGGER.debug("Court with id {} was deleted from db", courtId);
+        return courtId;
+    }
 }
