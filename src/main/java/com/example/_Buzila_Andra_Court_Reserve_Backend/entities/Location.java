@@ -37,10 +37,6 @@ public class Location implements Serializable
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Tariff> tariffs;
 
-    //Empty constructor:
-    public Location() {
-    }
-
     //Constructor with id:
     public Location(UUID id, String address, double longitude, double latitude, String courtsImage) {
         this.id = id;
@@ -57,6 +53,10 @@ public class Location implements Serializable
         this.longitude = longitude;
         this.latitude = latitude;
         this.courtsImage = courtsImage;
+    }
+
+    //Empty constructor:
+    public Location() {
     }
 
     //Getters and Setters:
@@ -95,9 +95,5 @@ public class Location implements Serializable
     }
     public void setCourts(List<Court> courts) {
         this.courts = courts;
-    }
-
-    public void testFunction(){
-        
     }
 }
