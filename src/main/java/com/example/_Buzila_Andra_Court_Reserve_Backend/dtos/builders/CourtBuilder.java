@@ -14,8 +14,14 @@ public class CourtBuilder
     //Enitity to CourtDTO:
     public static CourtDTO toCourtDTO(Court court)
     {
-        return new CourtDTO(court.getId(), court.getType(),
-                court.getName(), court.getLocation()
+        //        return new CourtDTO(court.getId(), court.getType(),
+//                court.getName(), court.getLocation()
+//        );
+
+        return new CourtDTO(
+                court.getId(),
+                court.getType(),
+                court.getName()
         );
     }
 

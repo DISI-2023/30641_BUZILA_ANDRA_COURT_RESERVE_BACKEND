@@ -7,4 +7,6 @@ import java.util.UUID;
 public interface CourtRepository extends JpaRepository<Court, UUID>
 {
     //Save predefinit;
+
+    //Get All predefinit;
 }

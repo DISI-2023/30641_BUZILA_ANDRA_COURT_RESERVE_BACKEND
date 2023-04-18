@@ -1,6 +1,7 @@
 package com.example._Buzila_Andra_Court_Reserve_Backend.services;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddCourtDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.CourtDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.CourtBuilder;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Location;
@@ -10,8 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CourtService
@@ -56,5 +60,15 @@ public class CourtService
 
         //Return entity court:
         return courtOptional.get();
+    }
+
+    //Find all courts:
+    public List<CourtDTO> findAllCourts() {
+        //Get courts from repo:
+        List<Court> allCourts = courtRepository.findAll();
+
+        return allCourts.stream()
+                .map(CourtBuilder::toCourtDTO)
+                .collect(Collectors.toList());
     }
 }
