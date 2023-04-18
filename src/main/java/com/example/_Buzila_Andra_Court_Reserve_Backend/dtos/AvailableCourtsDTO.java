@@ -1,6 +1,7 @@
 package com.example._Buzila_Andra_Court_Reserve_Backend.dtos;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
+import net.minidev.json.JSONArray;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
@@ -23,13 +24,14 @@ public class AvailableCourtsDTO
 
     //Available courts:
     @NotNull
-    private List<Court> availableCourts;
+//    private List<Court> availableCourts;
+    private JSONArray availableCourts;
 
 
     //Constructor without id:
     public AvailableCourtsDTO(UUID locationId, String locationAddress,
                               double locationLongitude, double locationLatitude,
-                              List<Court> availableCourts) {
+                              JSONArray availableCourts) {
         this.locationId = locationId;
         this.locationAddress = locationAddress;
         this.locationLongitude = locationLongitude;
@@ -67,10 +69,10 @@ public class AvailableCourtsDTO
     public void setLocationLatitude(double locationLatitude) {
         this.locationLatitude = locationLatitude;
     }
-    public List<Court> getAvailableCourts() {
+    public JSONArray getAvailableCourts() {
         return availableCourts;
     }
-    public void setAvailableCourts(List<Court> availableCourts) {
+    public void setAvailableCourts(JSONArray availableCourts) {
         this.availableCourts = availableCourts;
     }
 
@@ -84,15 +86,15 @@ public class AvailableCourtsDTO
         return Objects.equals(locationId, that.locationId) &&
                 Objects.equals(locationAddress, that.locationAddress) &&
                 locationLongitude == that.locationLongitude &&
-                locationLatitude == that.locationLatitude &&
-                Objects.equals(availableCourts, that.availableCourts); //List;
+                locationLatitude == that.locationLatitude;
+//                Objects.equals(availableCourts, that.availableCourts); //List;
     }
 
     //Hash:
     @Override
     public int hashCode() {
         return Objects.hash(locationId, locationAddress,
-                locationLongitude, locationLatitude,
-                availableCourts);
+                locationLongitude, locationLatitude);
+//                availableCourts);
     }
 }
