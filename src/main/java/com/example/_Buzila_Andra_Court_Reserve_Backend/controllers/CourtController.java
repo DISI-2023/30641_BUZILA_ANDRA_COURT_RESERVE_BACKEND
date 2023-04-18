@@ -2,6 +2,7 @@ package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddCourtDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.DeleteCourtDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.UpdateCourtDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Location;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.CourtService;
@@ -47,6 +48,17 @@ public class CourtController
     @PostMapping(value="/deleteCourt")
     public ResponseEntity<UUID> deleteCourt(@Valid @RequestBody DeleteCourtDTO court) {
         UUID deletedCourtID = courtService.delete(court.getId());
-        return new ResponseEntity<>(deletedCourtID, HttpStatus.CREATED);
+        return new ResponseEntity<>(deletedCourtID, HttpStatus.OK);
+    }
+
+    @PostMapping(value="/updateCourt")
+    public ResponseEntity<UUID> updateCourt(@Valid @RequestBody UpdateCourtDTO updateCourtDTO) {
+
+        Court court = courtService.findEntityCourtById(updateCourtDTO.getId());
+        court.setName(updateCourtDTO.getName());
+        court.setType(updateCourtDTO.getType());
+
+        UUID courtID = courtService.update(court);
+        return new ResponseEntity<>(courtID, HttpStatus.OK);
     }
 }
