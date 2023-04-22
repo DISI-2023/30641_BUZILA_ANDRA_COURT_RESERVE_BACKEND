@@ -11,11 +11,11 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Builder
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailDTO
 {
 //    @NotNull //Not for email;
-    @JsonProperty("email")
+//    @JsonProperty("email")
     private String email;
 
     //Constructor without id: JSon Property for conversion:
@@ -25,7 +25,7 @@ public class EmailDTO
 //    }
 
 //    @JsonProperty("email")
-    public EmailDTO(String email)
+    public EmailDTO(@JsonProperty("email") String email)
     {
         this.email = email;
     }
