@@ -2,11 +2,8 @@ package com.example._Buzila_Andra_Court_Reserve_Backend.dtos;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
-import java.util.UUID;
 
 public class AddUserDTO {
-
-    private UUID id;
 
     @NotNull
     private String firstname;
