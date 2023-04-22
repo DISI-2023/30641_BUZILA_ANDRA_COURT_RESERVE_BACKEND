@@ -54,4 +54,18 @@ public class UserService {
 
         return null;
     }
+
+    public User findEntityUserByEmailLogin(String email)
+    {
+        //Find in DB:
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        //If present, log, if not, throw;
+        if (!userOptional.isPresent()) {
+            LOGGER.error("User with email {} was not found in db", email);
+            throw new ResourceNotFoundException(User.class.getSimpleName() + " with email: " + email);
+        }
+
+        return userOptional.get();
+    }
 }
