@@ -1,9 +1,6 @@
 package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddCourtDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.CourtDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AvailableCourtsDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.LocationAndDateDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.*;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.CourtBuilder;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Location;
@@ -56,12 +53,12 @@ public class CourtController
     //Get all courts:
     //Receive nothing, Send Ok + all courts from db;
     @GetMapping(value = "/getCourtsForAdmin")
-    public ResponseEntity<List<CourtDTO>> getAllCourts()
+    public ResponseEntity<List<GetAllCourtsFromLocationDTO>> getAllCourts()
     {
         //All courts from DB:
-        List<CourtDTO> allCourts = courtService.findAllCourts();
+        List<GetAllCourtsFromLocationDTO> allCourts = courtService.findAllCourts();
 
-        //Return all courts:
+        //Return all courts: Primesc din service DTO corect:
         return new ResponseEntity<>(allCourts, HttpStatus.OK);
     }
 
