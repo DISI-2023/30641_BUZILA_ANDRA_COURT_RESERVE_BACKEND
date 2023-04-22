@@ -56,7 +56,7 @@ public class CourtController
     //Get courts from 1 location:
     //Receive id of location, Send all courts from location + Ok;
     @GetMapping(value = "/getAvailableCourts" + "/{id}")
-    public ResponseEntity<List<CourtDTO>> getUser(@PathVariable("id") UUID locationId)
+    public ResponseEntity<List<CourtDTO>> getAvailableCourts(@PathVariable("id") UUID locationId)
     {
         //Find location by id, id is correct:
         Location location = locationService.findEntityLocationById(locationId);
