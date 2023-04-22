@@ -62,6 +62,23 @@ public class CourtService
         return courtOptional.get();
     }
 
+    //Find entity courts by location id:
+    public List<Court> findCourtsByLocationId(UUID id)
+    {
+        //Test:
+        System.out.println("Location id: " + id + " ;");
+
+        //Find courts by location:
+        List<Court> locationCourts = courtRepository.findAllCourtsAtLocation(id);
+
+        //Daca nu sunt courts:
+        if(locationCourts.isEmpty()){
+            LOGGER.error("The location with id {} does not have any courts in the db!", id);
+        }
+
+        return locationCourts;
+    }
+
     //Find all courts:
     public List<CourtDTO> findAllCourts() {
         //Get courts from repo:
