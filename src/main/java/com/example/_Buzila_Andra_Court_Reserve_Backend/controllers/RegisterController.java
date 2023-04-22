@@ -8,6 +8,7 @@ import com.example._Buzila_Andra_Court_Reserve_Backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,6 +42,13 @@ public class RegisterController {
         {
             return new ResponseEntity<UUID>(user.getId(), HttpStatus.CONFLICT);
         }
+
+        Argon2PasswordEncoder encoder = new Argon2PasswordEncoder(32,64,1,15*1024,2);
+        String encodedPassword = encoder.encode(addUserDTO.getPassword());
+        addUserDTO.setPassword(encodedPassword);
+
+        //var validPassword = encoder.matches(myPassword, encodedPassword);
+        //System.out.println(validPassword);
 
         //UUID returnat de la insert:
         UUID addUserId = userService.registerUser(addUserDTO, role);

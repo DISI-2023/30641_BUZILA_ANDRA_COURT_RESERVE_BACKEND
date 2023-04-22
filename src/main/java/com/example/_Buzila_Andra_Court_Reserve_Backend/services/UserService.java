@@ -46,13 +46,12 @@ public class UserService {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         //If present, log, if not, throw;
-        if (!userOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             LOGGER.error("User with email {} already exists!", email);
 
-            return null;
+            return userOptional.get();
         }
 
-        //Return entity court:
-        return userOptional.get();
+        return null;
     }
 }
