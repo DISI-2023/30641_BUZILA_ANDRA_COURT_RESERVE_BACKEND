@@ -10,8 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CourtService
@@ -56,5 +59,22 @@ public class CourtService
 
         //Return entity court:
         return courtOptional.get();
+    }
+
+    //Find entity courts by location id:
+    public List<Court> findCourtsByLocationId(UUID id)
+    {
+        //Test:
+        System.out.println("Location id: " + id + " ;");
+
+        //Find courts by location:
+        List<Court> locationCourts = courtRepository.findAllCourtsAtLocation(id);
+
+        //Daca nu sunt courts:
+        if(locationCourts.isEmpty()){
+            LOGGER.error("The location with id {} does not have any courts in the db!", id);
+        }
+
+        return locationCourts;
     }
 }
