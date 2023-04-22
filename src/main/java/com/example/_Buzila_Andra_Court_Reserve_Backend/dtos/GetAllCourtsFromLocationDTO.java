@@ -8,6 +8,9 @@ import java.util.UUID;
 public class GetAllCourtsFromLocationDTO
 {
     @NotNull
+    private UUID id;
+
+    @NotNull
     private String type;
 
     @NotNull
@@ -27,6 +30,22 @@ public class GetAllCourtsFromLocationDTO
 
     @NotNull
     private String location_courtsImage;
+
+
+    //Constructor with id (personal id):
+    public GetAllCourtsFromLocationDTO(UUID id, String type, String name, UUID location_id,
+                                       String location_address,
+                                       double location_longitude, double location_latitude,
+                                       String location_courtsImage) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.location_id = location_id;
+        this.location_address = location_address;
+        this.location_longitude = location_longitude;
+        this.location_latitude = location_latitude;
+        this.location_courtsImage = location_courtsImage;
+    }
 
     //Constructor without id (personal id):
     public GetAllCourtsFromLocationDTO(String type, String name, UUID location_id,
@@ -48,6 +67,12 @@ public class GetAllCourtsFromLocationDTO
     }
 
     //Getters and Setters:
+    public UUID getId() {
+        return id;
+    }
+    public void setId(UUID id) {
+        this.id = id;
+    }
     public String getType() {
         return type;
     }

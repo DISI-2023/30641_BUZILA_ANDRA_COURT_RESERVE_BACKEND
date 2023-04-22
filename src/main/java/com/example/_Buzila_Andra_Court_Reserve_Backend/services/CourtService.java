@@ -110,6 +110,7 @@ public class CourtService
 
             //Generate new DTO:
             GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
+                    court.getId(),
                     court.getType(), court.getName(), locationOptional.get().getId(),
                     locationOptional.get().getAddress(), locationOptional.get().getLongitude(),
                     locationOptional.get().getLatitude(),
