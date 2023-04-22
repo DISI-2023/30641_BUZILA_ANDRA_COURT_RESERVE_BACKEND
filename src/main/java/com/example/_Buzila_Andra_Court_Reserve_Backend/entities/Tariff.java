@@ -18,7 +18,7 @@ public class Tariff implements Serializable {
     @Type(type = "uuid-char")
     private UUID id;
 
-    @Column(name = "criterion", nullable = false, unique = true)
+    @Column(name = "criterion", nullable = false)
     private String criterion;
 
     @Column(name = "value", nullable = false)
