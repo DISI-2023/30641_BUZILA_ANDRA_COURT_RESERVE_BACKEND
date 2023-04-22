@@ -1,9 +1,6 @@
 package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddCourtDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.CourtDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AvailableCourtsDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.LocationAndDateDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.*;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.CourtBuilder;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Location;
@@ -16,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -56,7 +54,7 @@ public class CourtController
     //Get courts from 1 location:
     //Receive id of location, Send all courts from location + Ok;
     @GetMapping(value = "/getAvailableCourts" + "/{id}")
-    public ResponseEntity<List<CourtDTO>> getAvailableCourts(@PathVariable("id") UUID locationId)
+    public ResponseEntity<List<GetAllCourtsFromLocationDTO>> getAvailableCourts(@PathVariable("id") UUID locationId)
     {
         //Find location by id, id is correct:
         Location location = locationService.findEntityLocationById(locationId);
@@ -64,8 +62,23 @@ public class CourtController
         //Find courts that belong to that location:
         List<CourtDTO> courtsFromLocation = courtService.findCourtsByLocationIdDTO(location.getId());
 
+        //New DTO for court + location fields (and id)
+        List<GetAllCourtsFromLocationDTO> courtsFromLocationNew = new ArrayList<>();
+
+        //Convert:
+        for(CourtDTO courtDTO: courtsFromLocation)
+        {
+            //Generate new DTO:
+            GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
+                    courtDTO.getType(), courtDTO.getName(), location.getId(),
+                    location.getAddress(), location.getLongitude(), location.getLatitude(),
+                    location.getCourtsImage()
+            );
+            courtsFromLocationNew.add(newCourtDTO);
+        }
+
         //Return all the courts from location:
-        return new ResponseEntity<>(courtsFromLocation, HttpStatus.OK);
+        return new ResponseEntity<>(courtsFromLocationNew, HttpStatus.OK);
     }
 
     //Search for courts:
