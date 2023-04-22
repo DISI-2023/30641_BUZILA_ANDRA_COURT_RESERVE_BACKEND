@@ -55,6 +55,4 @@ public class AMQPConfig
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
         return rabbitTemplate;
     }
-
-
 }

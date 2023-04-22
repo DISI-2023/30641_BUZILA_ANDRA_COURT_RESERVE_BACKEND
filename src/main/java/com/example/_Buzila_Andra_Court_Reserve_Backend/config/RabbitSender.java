@@ -23,9 +23,10 @@ public class RabbitSender
     private String routingKey;
 
     //Send data:
-    public void send(EmailDTO payloadEmailData)
+    public void send(EmailDTO payloadEmailDataIn)
     {
-        rabbitTemplate.convertAndSend(exchange, routingKey, payloadEmailData);
-        log.info("The email data " + payloadEmailData + " was sent.");
+        rabbitTemplate.convertAndSend(exchange, routingKey, payloadEmailDataIn);
+        log.info("The email data " + payloadEmailDataIn + " was sent.");
+        System.out.println("The email data " + payloadEmailDataIn + " was sent.");
     }
 }
