@@ -35,6 +35,13 @@ public class CourtDTO extends RepresentationModel<CourtDTO> {
         this.location = location;
     }
 
+    //Constructor without location:
+    public CourtDTO(UUID id, String type, String name) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+    }
+
     //Empty constructor:
     public CourtDTO() {
     }
