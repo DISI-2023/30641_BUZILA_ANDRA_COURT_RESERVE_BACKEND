@@ -153,4 +153,18 @@ public class CourtService
         //Return DTOs;
         return locationCourtsDTO;
     }
+
+    public UUID delete(UUID courtId) {
+        courtRepository.deleteById(courtId);
+        LOGGER.debug("Court with id {} was deleted from db", courtId);
+        return courtId;
+    }
+
+    public UUID update(Court court) {
+        //User user = UserBuilder.toUserEntityUpdate(userDTO);
+        //System.out.println(user.getId());
+        Court courtUpdated = courtRepository.save(court);
+        LOGGER.debug("Court with id {} was updated in db", courtUpdated.getId());
+        return courtUpdated.getId();
+    }
 }
