@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,7 +51,24 @@ public class UserService {
             return userOptional.get();
         }
 
+        //If not present, nothing:
         return null;
+    }
+
+    //Update user password:
+    public User updateUser(User user, String newPassword)
+    {
+        //Exista user, parola este buna, acum mai trebuie doar salvata:
+
+        //Salvare parola:
+        //Nu conteaza daca este aceeasi parola ca cea veche;
+        user.setPassword(newPassword);
+
+        //Salvare user:
+        User newUser = userRepository.save(user);
+
+        LOGGER.debug("User with id {} was updated in the db!", newUser.getId());
+        return newUser;
     }
 
     public User findEntityUserByEmailLogin(String email)
