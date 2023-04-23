@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -60,6 +62,36 @@ public class CourtController
 
         //Return all courts: Primesc din service DTO corect:
         return new ResponseEntity<>(allCourts, HttpStatus.OK);
+    }
+
+    //Get courts from 1 location:
+    //Receive id of location, Send all courts from location + Ok;
+    @GetMapping(value = "/getAvailableCourts" + "/{id}")
+    public ResponseEntity<List<GetAllCourtsFromLocationDTO>> getAvailableCourts(@PathVariable("id") UUID locationId)
+    {
+        //Find location by id, id is correct:
+        Location location = locationService.findEntityLocationById(locationId);
+
+        //Find courts that belong to that location:
+        List<CourtDTO> courtsFromLocation = courtService.findCourtsByLocationIdDTO(location.getId());
+
+        //New DTO for court + location fields (and id)
+        List<GetAllCourtsFromLocationDTO> courtsFromLocationNew = new ArrayList<>();
+
+        //Convert:
+        for(CourtDTO courtDTO: courtsFromLocation)
+        {
+            //Generate new DTO:
+            GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
+                    courtDTO.getType(), courtDTO.getName(), location.getId(),
+                    location.getAddress(), location.getLongitude(), location.getLatitude(),
+                    location.getCourtsImage()
+            );
+            courtsFromLocationNew.add(newCourtDTO);
+        }
+
+        //Return all the courts from location:
+        return new ResponseEntity<>(courtsFromLocationNew, HttpStatus.OK);
     }
 
     //Search for courts:
