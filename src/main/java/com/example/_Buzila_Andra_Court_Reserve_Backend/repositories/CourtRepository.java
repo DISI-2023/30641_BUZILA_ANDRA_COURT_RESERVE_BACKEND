@@ -11,6 +11,8 @@ public interface CourtRepository extends JpaRepository<Court, UUID>
 {
     //Save predefinit;
 
+    //Get All predefinit;
+
     //Find all courts with location id;
     @Query(value = "SELECT c " +
             "FROM Court c " +

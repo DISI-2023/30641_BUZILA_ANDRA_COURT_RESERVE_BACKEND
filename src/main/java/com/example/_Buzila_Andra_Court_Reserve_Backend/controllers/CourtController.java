@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -53,6 +54,18 @@ public class CourtController
 
         //Return ID if corect:
         return new ResponseEntity<UUID>(addCourtId, HttpStatus.OK);
+    }
+
+    //Get all courts:
+    //Receive nothing, Send Ok + all courts from db;
+    @GetMapping(value = "/getCourtsForAdmin")
+    public ResponseEntity<List<GetAllCourtsFromLocationDTO>> getAllCourts()
+    {
+        //All courts from DB:
+        List<GetAllCourtsFromLocationDTO> allCourts = courtService.findAllCourts();
+
+        //Return all courts: Primesc din service DTO corect:
+        return new ResponseEntity<>(allCourts, HttpStatus.OK);
     }
 
     //Get courts from 1 location:
