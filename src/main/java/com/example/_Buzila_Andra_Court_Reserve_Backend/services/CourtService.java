@@ -2,16 +2,20 @@ package com.example._Buzila_Andra_Court_Reserve_Backend.services;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddCourtDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.CourtDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.GetAllCourtsFromLocationDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.CourtDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.CourtBuilder;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Location;
 import com.example._Buzila_Andra_Court_Reserve_Backend.repositories.CourtRepository;
+import com.example._Buzila_Andra_Court_Reserve_Backend.repositories.LocationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +28,13 @@ public class CourtService
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(CourtService.class);
     private final CourtRepository courtRepository;
+    private final LocationRepository locationRepository;
 
     //Constructor:
     @Autowired
-    public CourtService(CourtRepository courtRepository) {
+    public CourtService(CourtRepository courtRepository, LocationRepository locationRepository) {
         this.courtRepository = courtRepository;
+        this.locationRepository = locationRepository;
     }
 
     //Insert court:
@@ -81,6 +87,48 @@ public class CourtService
         return locationCourts;
     }
 
+    //Find all courts:
+    public List<GetAllCourtsFromLocationDTO> findAllCourts() {
+        //Get courts from repo:
+        List<Court> allCourts = courtRepository.findAll();
+
+        //Convert:
+        //Get courts list:
+        List<GetAllCourtsFromLocationDTO> allCourtsNew = new ArrayList<>();
+
+        //Pe rand:
+        for(Court court: allCourts)
+        {
+            //Find location for court:
+            //Find in DB:
+            Optional<Location> locationOptional = locationRepository.findById(court.getLocation().getId());
+
+            //If present, log, if not, throw;
+            if (!locationOptional.isPresent()) {
+                LOGGER.error("Location with id {} was not found in the db!", court.getLocation().getId());
+
+                throw new ResourceNotFoundException(Location.class.getSimpleName()
+                        + " with id: " + court.getLocation().getId() + " was not found!");
+            }
+
+            //Generate new DTO:
+            GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
+                    court.getId(),
+                    court.getType(), court.getName(), locationOptional.get().getId(),
+                    locationOptional.get().getAddress(), locationOptional.get().getLongitude(),
+                    locationOptional.get().getLatitude(),
+                    locationOptional.get().getCourtsImage()
+            );
+            allCourtsNew.add(newCourtDTO);
+        }
+
+        return allCourtsNew;
+
+//        return allCourts.stream()
+//                .map(CourtBuilder::toCourtDTO)
+//                .collect(Collectors.toList());
+    }
+
     //Find entity courts by location id:
     public List<CourtDTO> findCourtsByLocationIdDTO(UUID id)
     {
@@ -104,5 +152,19 @@ public class CourtService
 
         //Return DTOs;
         return locationCourtsDTO;
+    }
+
+    public UUID delete(UUID courtId) {
+        courtRepository.deleteById(courtId);
+        LOGGER.debug("Court with id {} was deleted from db", courtId);
+        return courtId;
+    }
+
+    public UUID update(Court court) {
+        //User user = UserBuilder.toUserEntityUpdate(userDTO);
+        //System.out.println(user.getId());
+        Court courtUpdated = courtRepository.save(court);
+        LOGGER.debug("Court with id {} was updated in db", courtUpdated.getId());
+        return courtUpdated.getId();
     }
 }
