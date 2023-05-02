@@ -84,4 +84,18 @@ public class UserService {
 
         return userOptional.get();
     }
+
+    public User findEntityUserById(UUID id)
+    {
+        //Find in DB:
+        Optional<User> userOptional = userRepository.findById(id);
+
+        //If present, log, if not, throw;
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        }
+
+        //If not present, nothing:
+        return null;
+    }
 }
