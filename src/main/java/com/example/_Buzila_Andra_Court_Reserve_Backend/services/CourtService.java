@@ -181,15 +181,15 @@ public class CourtService
             //Adaug datele location-ului si atat:
 
             //Find location:
-            Optional<Location> locationOptional = locationRepository.findById(id);
+            //Optional<Location> locationOptional = locationRepository.findById(id);
 
             //If present, log, if not, throw;
-            if (!locationOptional.isPresent()) {
-                LOGGER.error("Location with id {} was not found in the db!", id);
-
-                throw new ResourceNotFoundException(Location.class.getSimpleName()
-                        + " with id: " + id + " was not found!");
-            }
+//            if (!locationOptional.isPresent()) {
+//                LOGGER.error("Location with id {} was not found in the db!", id);
+//
+//                throw new ResourceNotFoundException(Location.class.getSimpleName()
+//                        + " with id: " + id + " was not found!");
+//            }
 
             //If present, add it to list:
             List<CourtDTO> locationCourtsDTO = new ArrayList<>();
