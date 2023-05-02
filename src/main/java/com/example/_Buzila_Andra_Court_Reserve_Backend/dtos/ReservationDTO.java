@@ -1,47 +1,35 @@
-package com.example._Buzila_Andra_Court_Reserve_Backend.entities;
+package com.example._Buzila_Andra_Court_Reserve_Backend.dtos;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.springframework.http.ResponseEntity;
-
-import javax.persistence.*;
-import java.io.Serializable;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.User;
+import org.springframework.hateoas.RepresentationModel;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-public class Reservation implements Serializable {
+public class ReservationDTO extends RepresentationModel<ReservationDTO> {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    //@Type(type = "uuid-binary")
-    @Type(type = "uuid-char")
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "court_id")
     private Court court;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "arrivingTime", nullable = false)
+    @NotNull
     private LocalDateTime arrivingTime;
 
-    @Column(name = "leavingTime", nullable = false)
+    @NotNull
     private LocalDateTime leavingTime;
 
-    @Column(name = "price", nullable = false)
+    @NotNull
     private double price;
 
-    public Reservation() {
+    public ReservationDTO(){
 
     }
 
-    public Reservation(UUID id, Court court, User user, LocalDateTime arrivingTime, LocalDateTime leavingTime, double price) {
+    public ReservationDTO(UUID id, Court court, User user, LocalDateTime arrivingTime, LocalDateTime leavingTime, double price) {
         this.id = id;
         this.court = court;
         this.user = user;
@@ -50,7 +38,7 @@ public class Reservation implements Serializable {
         this.price = price;
     }
 
-    public Reservation(Court court, User user, LocalDateTime arrivingTime, LocalDateTime leavingTime, double price) {
+    public ReservationDTO(Court court, User user, LocalDateTime arrivingTime, LocalDateTime leavingTime, double price) {
         this.court = court;
         this.user = user;
         this.arrivingTime = arrivingTime;
@@ -106,5 +94,19 @@ public class Reservation implements Serializable {
         this.price = price;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReservationDTO that = (ReservationDTO) o;
+        return Double.compare(that.price, price) == 0 &&
+                Objects.equals(id, that.id) && Objects.equals(court, that.court) &&
+                Objects.equals(user, that.user) && Objects.equals(arrivingTime, that.arrivingTime) &&
+                Objects.equals(leavingTime, that.leavingTime);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, court, user, arrivingTime, leavingTime, price);
+    }
 }
