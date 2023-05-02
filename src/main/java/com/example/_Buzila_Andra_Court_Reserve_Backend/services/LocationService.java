@@ -1,7 +1,10 @@
 package com.example._Buzila_Andra_Court_Reserve_Backend.services;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddLocationDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.GetAllCourtsFromLocationDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.LocationDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.LocationBuilder;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Location;
 import com.example._Buzila_Andra_Court_Reserve_Backend.repositories.LocationRepository;
 import org.slf4j.Logger;
@@ -9,8 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class LocationService
@@ -55,5 +62,18 @@ public class LocationService
 
         //Return entity location:
         return locationOptional.get();
+    }
+
+    //Find all locations:
+    public List<LocationDTO> findAllLocations()
+    {
+        //Get locations from repo:
+        List<Location> allLocations = locationRepository.findAll();
+
+        //Return converting from entity to dto:
+        //Din lista goala ramane lista goala:
+        return allLocations.stream()
+                .map(LocationBuilder::toLocationDTO)
+                .collect(Collectors.toList());
     }
 }

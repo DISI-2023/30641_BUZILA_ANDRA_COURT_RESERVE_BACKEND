@@ -87,7 +87,7 @@ public class CourtController
         {
             //Generate new DTO:
             GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
-                    courtDTO.getType(), courtDTO.getName(), location.getId(),
+                    courtDTO.getId(), courtDTO.getType(), courtDTO.getName(), location.getId(),
                     location.getAddress(), location.getLongitude(), location.getLatitude(),
                     location.getCourtsImage()
             );
@@ -178,6 +178,13 @@ public class CourtController
         //if day diff => good;
         //if hour diff => good;
         //else daca toate 4 sunt egale, atunci inseamna ca acel court nu este disponibil, nu se adauga;
+
+
+
+
+        //Filtrare in functie de data, restul courturilor se filtreaza in functie de data:
+        courtsList = new ArrayList<>();
+
 
 
         //Test 1:

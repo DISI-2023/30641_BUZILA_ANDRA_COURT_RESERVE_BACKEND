@@ -1,6 +1,8 @@
 package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddLocationDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.GetAllCourtsFromLocationDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.LocationDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -38,5 +40,16 @@ public class LocationController
 
         //Return ID if corect:
         return new ResponseEntity<UUID>(addLocationId, HttpStatus.OK);
+    }
+
+    //Send all data from locations, except courts;
+    @GetMapping(value = "/getAllLocations")
+    public ResponseEntity<List<LocationDTO>> getAllLocations()
+    {
+        //All locations from DB:
+        List<LocationDTO> allLocations = locationService.findAllLocations();
+
+        //Return all locations:
+        return new ResponseEntity<>(allLocations, HttpStatus.OK);
     }
 }
