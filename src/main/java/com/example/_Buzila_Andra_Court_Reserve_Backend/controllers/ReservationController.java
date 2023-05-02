@@ -42,6 +42,11 @@ public class ReservationController {
         //find user by id
         User user = userService.findEntityUserById(addReservationDTO.getUser_id());
 
+        if(user == null || court == null)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         //trebuie calculat si un price
         double price=0;
 
