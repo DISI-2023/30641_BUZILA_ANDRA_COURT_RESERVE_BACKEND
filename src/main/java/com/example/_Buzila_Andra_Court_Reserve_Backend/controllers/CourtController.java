@@ -17,13 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -85,12 +83,32 @@ public class CourtController
         //Convert:
         for(CourtDTO courtDTO: courtsFromLocation)
         {
+            //If null, "", "", atunci return 1 element, doar location:
+            if(Objects.equals(courtDTO.getId(), null) && Objects.equals(courtDTO.getType(), "") && Objects.equals(courtDTO.getName(), ""))
+            {
+                //Se pun date goale la court, dar se pun datele bune la locatie:
+                GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
+                        courtDTO.getId(), courtDTO.getType(), courtDTO.getName(),
+                        location.getId(),
+                        location.getAddress(),
+                        location.getLongitude(),
+                        location.getLatitude(),
+                        location.getCourtsImage()
+                );
+
+                courtsFromLocationNew.add(newCourtDTO);
+
+                //Nu mai adauga in lista:
+                break;
+            }
+
             //Generate new DTO:
             GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
                     courtDTO.getId(), courtDTO.getType(), courtDTO.getName(), location.getId(),
                     location.getAddress(), location.getLongitude(), location.getLatitude(),
                     location.getCourtsImage()
             );
+
             courtsFromLocationNew.add(newCourtDTO);
         }
 
