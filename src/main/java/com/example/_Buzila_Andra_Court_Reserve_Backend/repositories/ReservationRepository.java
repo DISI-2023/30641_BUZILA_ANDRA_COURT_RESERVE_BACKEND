@@ -16,4 +16,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>
             "FROM Reservation r " +
             "WHERE r.user.id = :id")
     List<Reservation> findAllReservationsAtUser(@Param("id") UUID id);
+
+    //Pentru find reservations by court:
+    List<Reservation> findByCourt(Court court);
 }

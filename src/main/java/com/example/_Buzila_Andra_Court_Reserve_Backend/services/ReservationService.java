@@ -44,6 +44,15 @@ public class ReservationService {
         return reservation.getId();
     }
 
+    //Find reservations by court:
+    public List<Reservation> findReservationsByCourt(Court court)
+    {
+        //Find courts by location:
+        List<Reservation> reservationsAtCourt = reservationRepository.findByCourt(court);
+
+        return reservationsAtCourt;
+    }
+
     //Get all reservations for a user:
     public List<GetAllReservationForUserDTO> findAllReservationsForUser(UUID id)
     {
