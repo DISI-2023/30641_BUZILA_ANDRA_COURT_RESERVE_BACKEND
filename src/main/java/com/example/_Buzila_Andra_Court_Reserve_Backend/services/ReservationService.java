@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,5 +38,13 @@ public class ReservationService {
 
         //LOGGER.debug("Reservation with id {} was inserted in the db!", user.getId());
         return reservation.getId();
+    }
+
+    public List<Reservation> findReservationsByCourt(Court court)
+    {
+        //Find courts by location:
+        List<Reservation> reservationsAtCourt = reservationRepository.findByCourt(court);
+
+        return reservationsAtCourt;
     }
 }

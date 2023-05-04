@@ -3,6 +3,7 @@ package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddReservationDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddUserDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Reservation;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Role;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.User;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.CourtService;
@@ -15,6 +16,8 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,7 +37,7 @@ public class ReservationController {
     }
 
     @PostMapping()
-    public ResponseEntity insertReservation(@Valid @RequestBody AddReservationDTO addReservationDTO)
+    public ResponseEntity<UUID> insertReservation(@Valid @RequestBody AddReservationDTO addReservationDTO)
     {
         //find court by id
         Court court = courtService.findEntityCourtById(addReservationDTO.getCourt_id());
@@ -44,7 +47,30 @@ public class ReservationController {
 
         if(user == null || court == null)
         {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<UUID>(UUID.randomUUID(), HttpStatus.NOT_FOUND);
+        }
+
+        //am toate rezervarile de la acest court, verific daca una dintre ele se intercaleaza din punct de vedere al
+        //timpului cu cea actuala
+        List<Reservation> reservationsAtCourt = reservationService.findReservationsByCourt(court);
+        LocalDateTime dataActualaArriving = addReservationDTO.getArrivingTime();
+        LocalDateTime dataActualaLeaving = addReservationDTO.getLeavingTime();
+        for(Reservation r:reservationsAtCourt)
+        {
+            LocalDateTime dataRezervareBDArriving = r.getArrivingTime();
+            LocalDateTime dataRezervareBDLeaving = r.getLeavingTime();
+            if(dataRezervareBDArriving.getYear()==dataActualaArriving.getYear() &&
+                    dataRezervareBDArriving.getMonth().equals(dataActualaArriving.getMonth()) &&
+                    dataRezervareBDArriving.getDayOfMonth()==dataActualaArriving.getDayOfMonth())
+            {
+                if((dataActualaArriving.getHour() <= dataRezervareBDArriving.getHour() && dataActualaLeaving.getHour() >
+                dataRezervareBDArriving.getHour()) || (dataActualaArriving.getHour() < dataRezervareBDLeaving.getHour()
+                        && dataActualaLeaving.getHour() >= dataRezervareBDLeaving.getHour()))
+                {
+
+                    return new ResponseEntity<UUID>(UUID.randomUUID(), HttpStatus.CONFLICT);
+                }
+            }
         }
 
         //trebuie calculat si un price
@@ -54,6 +80,6 @@ public class ReservationController {
         UUID addReservationId = reservationService.insertReservation(addReservationDTO, court, user, price);
 
         //Return ID if corect:
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<UUID>(addReservationId, HttpStatus.OK);
     }
 }
