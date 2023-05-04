@@ -1,8 +1,8 @@
 package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddReservationDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddUserDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.ReturnPriceDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.config.RabbitSender;
+import com.example._Buzila_Andra_Court_Reserve_Backend.config.RabbitSender2;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.*;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.*;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.CourtService;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.ReservationService;
@@ -27,8 +27,9 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final UserService  userService;
     private final CourtService courtService;
-
     private final TariffService tariffService;
+    @Autowired
+    private RabbitSender2 rabbitSender2;
 
     @Autowired
     public ReservationController(ReservationService reservationService, UserService userService, CourtService courtService,
@@ -82,6 +83,12 @@ public class ReservationController {
 
         //UUID returnat de la insert:
         UUID addReservationId = reservationService.insertReservation(addReservationDTO, court, user, price);
+
+        //trimit email de confirmare rezervare
+        AddReservationEmailDTO rmqEmailDTO = new AddReservationEmailDTO(user.getEmail(),
+                court.getName(), court.getLocation().getAddress(), addReservationDTO.getArrivingTime().toString(),
+                addReservationDTO.getLeavingTime().toString(), price);
+        rabbitSender2.send(rmqEmailDTO);
 
         //Return ID if corect:
         return new ResponseEntity<UUID>(addReservationId, HttpStatus.OK);
