@@ -154,7 +154,8 @@ public class CourtController
         //Nu consider mai putin de ora;
 
         //If date null => folosesc data now;
-        if(locationAndDateDTO == null)
+        //if(Objects.equals(locationAndDateDTO.getDateForCourts(), ""))
+        if(locationAndDateDTO.getDateForCourts() == null)
         {
             //2)
             year = LocalDateTime.now().getYear();
