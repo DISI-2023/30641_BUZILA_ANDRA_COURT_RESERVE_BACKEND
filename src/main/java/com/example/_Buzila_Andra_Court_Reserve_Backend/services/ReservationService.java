@@ -4,16 +4,14 @@ import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddReservationDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddUserDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.ReservationBuilder;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.UserBuilder;
-import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
-import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Reservation;
-import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Role;
-import com.example._Buzila_Andra_Court_Reserve_Backend.entities.User;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.*;
 import com.example._Buzila_Andra_Court_Reserve_Backend.repositories.ReservationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,5 +44,46 @@ public class ReservationService {
         List<Reservation> reservationsAtCourt = reservationRepository.findByCourt(court);
 
         return reservationsAtCourt;
+    }
+
+    public double calculatePrice(List<Tariff> tariffs, LocalDateTime arriving, LocalDateTime leaving)
+    {
+        double price = 0;
+        for(Tariff t:tariffs)
+        {
+            System.out.println(t.getCriterion());
+            if(t.getCriterion().equals("pretDeBaza"))
+            {
+                price += t.getValue();
+            }
+            //cazul in care e vara, e un pret in plus
+            if(arriving.getMonth().getValue() >= 6 && arriving.getMonth().getValue() <= 8 && t.getCriterion().equals("vara"))
+            {
+                price += t.getValue();
+            }
+            //la fel caz pentru iarna
+            if((arriving.getMonth().getValue() == 12 ||arriving.getMonth().getValue() == 1 || arriving.getMonth().getValue() == 2) &&
+                    t.getCriterion().equals("iarna"))
+            {
+                price += t.getValue();
+            }
+            //pentru weekend
+            if(arriving.getDayOfWeek().getValue() > 5 && t.getCriterion().equals("weekend"))
+            {
+                price += t.getValue();
+            }
+            //pentru nocturna, consider de la ora 18 incolo
+            if(arriving.getHour() >= 18 && t.getCriterion().equals("nocturna"))
+            {
+                price += t.getValue();
+            }
+        }
+
+        //consider ca pretul este per ora, deci mai inmultesc cu cate ore
+        int hours = leaving.getHour() - arriving.getHour();
+
+        price *= hours;
+
+        return price;
     }
 }

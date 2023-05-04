@@ -47,7 +47,8 @@ public class LoginController {
         }
         else
         {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            ReturnedLoginDTO userNeLogat = new ReturnedLoginDTO(user.getId(), "");
+            return new ResponseEntity<ReturnedLoginDTO>(userNeLogat, HttpStatus.NOT_FOUND);
         }
     }
 }

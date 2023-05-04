@@ -2,12 +2,10 @@ package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddReservationDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddUserDTO;
-import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
-import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Reservation;
-import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Role;
-import com.example._Buzila_Andra_Court_Reserve_Backend.entities.User;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.*;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.CourtService;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.ReservationService;
+import com.example._Buzila_Andra_Court_Reserve_Backend.services.TariffService;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,11 +27,15 @@ public class ReservationController {
     private final UserService  userService;
     private final CourtService courtService;
 
+    private final TariffService tariffService;
+
     @Autowired
-    public ReservationController(ReservationService reservationService, UserService userService, CourtService courtService) {
+    public ReservationController(ReservationService reservationService, UserService userService, CourtService courtService,
+                                 TariffService tariffService) {
         this.reservationService = reservationService;
         this.userService = userService;
         this.courtService = courtService;
+        this.tariffService = tariffService;
     }
 
     @PostMapping()
@@ -74,7 +76,8 @@ public class ReservationController {
         }
 
         //trebuie calculat si un price
-        double price=0;
+        List<Tariff> tariffs = tariffService.findTariffsByLocation(court.getLocation());
+        double price = reservationService.calculatePrice(tariffs, dataActualaArriving, dataActualaLeaving);
 
         //UUID returnat de la insert:
         UUID addReservationId = reservationService.insertReservation(addReservationDTO, court, user, price);
