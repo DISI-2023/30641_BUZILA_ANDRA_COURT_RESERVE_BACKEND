@@ -2,6 +2,7 @@ package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddReservationDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddUserDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.ReturnPriceDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.*;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.CourtService;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.ReservationService;
@@ -84,5 +85,30 @@ public class ReservationController {
 
         //Return ID if corect:
         return new ResponseEntity<UUID>(addReservationId, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/calculatePrice")
+    public ResponseEntity<ReturnPriceDTO> calculatePrice(@Valid @RequestBody AddReservationDTO addReservationDTO)
+    {
+        //find court by id
+        Court court = courtService.findEntityCourtById(addReservationDTO.getCourt_id());
+
+        //find user by id
+        User user = userService.findEntityUserById(addReservationDTO.getUser_id());
+
+        if(user == null || court == null)
+        {
+            ReturnPriceDTO returnPriceDTO = new ReturnPriceDTO(0);
+            return new ResponseEntity<ReturnPriceDTO>(returnPriceDTO, HttpStatus.NOT_FOUND);
+        }
+
+        //trebuie calculat si un price
+        List<Tariff> tariffs = tariffService.findTariffsByLocation(court.getLocation());
+        double price = reservationService.calculatePrice(tariffs, addReservationDTO.getArrivingTime(), addReservationDTO.getLeavingTime());
+
+        ReturnPriceDTO returnPriceDTO = new ReturnPriceDTO(price);
+
+        //Return ID if corect:
+        return new ResponseEntity<ReturnPriceDTO>(returnPriceDTO, HttpStatus.OK);
     }
 }
