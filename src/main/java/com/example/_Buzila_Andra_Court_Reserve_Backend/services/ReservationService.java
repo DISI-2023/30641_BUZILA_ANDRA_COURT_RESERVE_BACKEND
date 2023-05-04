@@ -2,6 +2,9 @@ package com.example._Buzila_Andra_Court_Reserve_Backend.services;
 
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddReservationDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddUserDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.CourtDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.GetAllReservationForUserDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.CourtBuilder;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.ReservationBuilder;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.builders.UserBuilder;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
@@ -14,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,5 +42,37 @@ public class ReservationService {
 
         //LOGGER.debug("Reservation with id {} was inserted in the db!", user.getId());
         return reservation.getId();
+    }
+
+    //Get all reservations for a user:
+    public List<GetAllReservationForUserDTO> findAllReservationsForUser(UUID id)
+    {
+        //Find all reservations for user id:
+        List<Reservation> userReservations = reservationRepository.findAllReservationsAtUser(id);
+
+        //List DTO:
+        List<GetAllReservationForUserDTO> userReservationsDTO = new ArrayList<>();
+
+        //If nothing, return empty list:
+        if(userReservations.isEmpty())
+        {
+            return userReservationsDTO;
+        }
+
+        //Daca are reservations, return list with data:
+        for(Reservation reservation: userReservations)
+        {
+            //Datele din user and court puse:
+            userReservationsDTO.add(new GetAllReservationForUserDTO(
+                    reservation.getId(), reservation.getUser().getId(), reservation.getUser().getFirstname(),
+                    reservation.getUser().getLastname(), reservation.getUser().getEmail(),
+                    reservation.getCourt().getId(), reservation.getCourt().getType(),
+                    reservation.getCourt().getName(), reservation.getCourt().getLocation().getId(),
+                    reservation.getCourt().getLocation().getAddress(), reservation.getArrivingTime(),
+                    reservation.getLeavingTime(), reservation.getPrice()
+            ));
+        }
+
+        return userReservationsDTO;
     }
 }
