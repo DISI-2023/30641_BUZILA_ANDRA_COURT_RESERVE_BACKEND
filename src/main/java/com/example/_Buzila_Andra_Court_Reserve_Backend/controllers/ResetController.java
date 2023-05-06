@@ -54,7 +54,7 @@ public class ResetController
 
     //Post pentru trimitere email de refacere parola: SEND: Valid Request:
     @PostMapping(value = "/changePassword")
-    public void sendEmailData(@Valid @RequestBody EmailDTO emailDTO)
+    public ResponseEntity<UUID> sendEmailData(@Valid @RequestBody EmailDTO emailDTO)
     {
         //Sent to RMQ Email Data; (Coada asincrona)
         //Cu send pune in coada, in RMQ queue;
@@ -65,6 +65,9 @@ public class ResetController
         EmailDTO rmqEmailDTO = new EmailDTO(emailDTO.getEmail());
 
         rabbitSender.send(rmqEmailDTO);
+
+        //Trimis status:
+        return new ResponseEntity<UUID>(UUID.randomUUID(), HttpStatus.OK);
     }
 
     //Trimiti email + parola + parola confirmare, le compari, daca sunt la fel, save new password, else return bad:
@@ -77,7 +80,7 @@ public class ResetController
         //Nu exista user:
         if(user == null)
         {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<UUID>(UUID.randomUUID(), HttpStatus.NOT_FOUND);
         }
 
         //Daca parolele sunt la fel, update la parola:
@@ -95,7 +98,7 @@ public class ResetController
         else
         {
             //Parolele nu sunt la fel, return not found:
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<UUID>(UUID.randomUUID(), HttpStatus.NOT_FOUND);
         }
 
         //Return user id if corect:

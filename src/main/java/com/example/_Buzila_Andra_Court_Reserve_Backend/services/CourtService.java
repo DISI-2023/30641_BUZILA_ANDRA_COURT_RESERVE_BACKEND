@@ -15,12 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,10 +84,13 @@ public class CourtService
         return locationCourts;
     }
 
-    //Find all courts:
+    //Find all courts: Include the ones that are empty, care nu au courts:
     public List<GetAllCourtsFromLocationDTO> findAllCourts() {
         //Get courts from repo:
         List<Court> allCourts = courtRepository.findAll();
+
+        //Get locations from repo:
+        List<Location> allLocations = locationRepository.findAll();
 
         //Convert:
         //Get courts list:
@@ -119,7 +119,41 @@ public class CourtService
                     locationOptional.get().getLatitude(),
                     locationOptional.get().getCourtsImage()
             );
+
             allCourtsNew.add(newCourtDTO);
+        }
+
+        //Add locations that do not have courts: La final:
+        for(Location location: allLocations)
+        {
+            //Noua locatie:
+            int newLocation = 0;
+
+            //Daca gasesc o locatie ce nu apare in lista deja creata, o adaug cu null la courts:
+            for(GetAllCourtsFromLocationDTO court: allCourtsNew)
+            {
+                //Daca sunt egale:
+                if(Objects.equals(location.getId(), court.getLocation_id()))
+                {
+                    //Nu este noua locatie:
+                    newLocation = 1;
+
+                    break;
+                }
+            }
+
+            //Generate new DTO if new location:
+            if(newLocation == 0)
+            {
+                GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
+                        null, null, null, location.getId(),
+                        location.getAddress(), location.getLongitude(),
+                        location.getLatitude(),
+                        location.getCourtsImage()
+                );
+
+                allCourtsNew.add(newCourtDTO);
+            }
         }
 
         return allCourtsNew;
@@ -139,10 +173,36 @@ public class CourtService
         List<Court> locationCourts = courtRepository.findAllCourtsAtLocation(id);
 
         //Daca nu sunt courts:
-        if(locationCourts.isEmpty()){
-            LOGGER.error("The location with id {} does not have any courts in the db!", id);
+        if(locationCourts.isEmpty())
+        {
+            //Old:
+            //LOGGER.error("The location with id {} does not have any courts in the db!", id);
+
+            //Adaug datele location-ului si atat:
+
+            //Find location:
+            //Optional<Location> locationOptional = locationRepository.findById(id);
+
+            //If present, log, if not, throw;
+//            if (!locationOptional.isPresent()) {
+//                LOGGER.error("Location with id {} was not found in the db!", id);
+//
+//                throw new ResourceNotFoundException(Location.class.getSimpleName()
+//                        + " with id: " + id + " was not found!");
+//            }
+
+            //If present, add it to list:
+            List<CourtDTO> locationCourtsDTO = new ArrayList<>();
+
+            locationCourtsDTO.add(new CourtDTO(
+                    null, "", "")
+            );
+
+            //Return list with 1 element:
+            return locationCourtsDTO;
         }
 
+        //Else we have courts:
         //Convert to DTO:
         List<CourtDTO> locationCourtsDTO = new ArrayList<>();
         for(Court court: locationCourts)

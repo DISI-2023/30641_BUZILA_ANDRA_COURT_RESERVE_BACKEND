@@ -8,8 +8,10 @@ import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.DeleteCourtDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.UpdateCourtDTO;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
 import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Location;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Reservation;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.CourtService;
 import com.example._Buzila_Andra_Court_Reserve_Backend.services.LocationService;
+import com.example._Buzila_Andra_Court_Reserve_Backend.services.ReservationService;
 import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,13 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -33,12 +33,15 @@ public class CourtController
     private final CourtService courtService;
     private final LocationService locationService;
 
+    private final ReservationService reservationService;
+
     //Constructor:
     @Autowired
-    public CourtController(CourtService courtService, LocationService locationService)
+    public CourtController(CourtService courtService, LocationService locationService, ReservationService reservationService)
     {
         this.courtService = courtService;
         this.locationService = locationService;
+        this.reservationService = reservationService;
     }
 
     //Add Court:
@@ -85,12 +88,32 @@ public class CourtController
         //Convert:
         for(CourtDTO courtDTO: courtsFromLocation)
         {
+            //If null, "", "", atunci return 1 element, doar location:
+            if(Objects.equals(courtDTO.getId(), null) && Objects.equals(courtDTO.getType(), "") && Objects.equals(courtDTO.getName(), ""))
+            {
+                //Se pun date goale la court, dar se pun datele bune la locatie:
+                GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
+                        courtDTO.getId(), courtDTO.getType(), courtDTO.getName(),
+                        location.getId(),
+                        location.getAddress(),
+                        location.getLongitude(),
+                        location.getLatitude(),
+                        location.getCourtsImage()
+                );
+
+                courtsFromLocationNew.add(newCourtDTO);
+
+                //Nu mai adauga in lista:
+                break;
+            }
+
             //Generate new DTO:
             GetAllCourtsFromLocationDTO newCourtDTO = new GetAllCourtsFromLocationDTO(
-                    courtDTO.getType(), courtDTO.getName(), location.getId(),
+                    courtDTO.getId(), courtDTO.getType(), courtDTO.getName(), location.getId(),
                     location.getAddress(), location.getLongitude(), location.getLatitude(),
                     location.getCourtsImage()
             );
+
             courtsFromLocationNew.add(newCourtDTO);
         }
 
@@ -128,9 +151,11 @@ public class CourtController
         Month month;
         int day;
         int hour;
+        //Nu consider mai putin de ora;
 
-        //if date null => folosesc data now;
-        if(locationAndDateDTO == null)
+        //If date null => folosesc data now;
+        //if(Objects.equals(locationAndDateDTO.getDateForCourts(), ""))
+        if(locationAndDateDTO.getDateForCourts() == null)
         {
             //2)
             year = LocalDateTime.now().getYear();
@@ -171,13 +196,67 @@ public class CourtController
             */
         }
 
-        //ToDo:
-        //Dupa filtrare dupa data: (Folosind controllerul de reservation)
-        //if year diff => good;
-        //if month diff => good;
-        //if day diff => good;
-        //if hour diff => good;
-        //else daca toate 4 sunt egale, atunci inseamna ca acel court nu este disponibil, nu se adauga;
+
+
+
+        //Noua lista, cu courturile ramase:
+        List<Court> newCourtsList = new ArrayList<>();
+
+        //Am toate courts de la locatie;
+        //Acum toate courts care nu sunt disponibile la acea ora nu se afiseaza:
+        for(Court court: courtsList)
+        {
+            //Ma uit la reservarile fiecarui cort pe rand:
+            List<Reservation> reservationsAtCourt = reservationService.findReservationsByCourt(court);
+
+            //Pentru courtul acesta:
+            int noIntersection = 0;
+
+            //Pentru reservarile court-ului:
+            for(Reservation reservation : reservationsAtCourt)
+            {
+                //Data begin and end pentru reservare:
+                LocalDateTime beginDate = reservation.getArrivingTime();
+                LocalDateTime endDate = reservation.getLeavingTime();
+
+                //Pentru begin:
+                int yearBegin = beginDate.getYear();
+                Month monthBegin = beginDate.getMonth();
+                int dayBegin = beginDate.getDayOfMonth();
+                int hourBegin = beginDate.getHour();
+
+                //Pentru end:
+                int yearEnd = endDate.getYear();
+                Month monthEnd = endDate.getMonth();
+                int dayEnd = endDate.getDayOfMonth();
+                int hourEnd = endDate.getHour();
+
+                //Daca nu se intercaleaza cu nici o alta rezervare, atunci ii dau add:
+                //Daca se intercaleaza, termin cu acest court si trec la urmatorul:
+                if(year == yearBegin && Objects.equals(month, monthBegin)
+                && day == dayBegin)
+                {
+                    //Daca sunt in acelasi an, luna, zi:
+                    if(hour >= hourBegin && hour <= hourEnd)
+                    {
+                        //Exista intersectie:
+                        noIntersection = 1;
+                        break;
+
+                        //AvailableCourtsDTO availableCourtsDTO = new AvailableCourtsDTO();
+                        //return new ResponseEntity<>(availableCourtsDTO, HttpStatus.CONFLICT);
+                    }
+                }
+            }
+
+            //Dau add daca nu sunt intersectii:
+            if(noIntersection == 0)
+            {
+                //Dupa add, trec la urmatorul court:
+                newCourtsList.add(court);
+            }
+        }
+
 
 
         //Test 1:
@@ -191,7 +270,7 @@ public class CourtController
         //Return courts list in DTO (after creating list of courts + DTO):
         //Create json list: din 3 in 3 sunt courturile:
         JSONArray sendCourtsList = new JSONArray();
-        for(Court court: courtsList)
+        for(Court court: newCourtsList)
         {
             //Adaug fiecare element in lista noua: Din Entity in DTO:
             //sendCourtsList.add(CourtBuilder.toCourtDTO(court.));

@@ -12,7 +12,7 @@ public class LocationAndDateDTO
     private UUID locationId;
 
     //Date:
-    @NotNull
+    //@NotNull
     private LocalDateTime dateForCourts;
 
     //Constructor without id:
