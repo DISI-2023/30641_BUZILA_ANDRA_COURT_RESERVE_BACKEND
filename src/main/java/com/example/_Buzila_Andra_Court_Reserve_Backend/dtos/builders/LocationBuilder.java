@@ -13,9 +13,15 @@ public class LocationBuilder
     //Enitity to LocationDTO:
     public static LocationDTO toLocationDTO(Location location)
     {
+        //Cu courts:
+//        return new LocationDTO(location.getId(), location.getAddress(),
+//                location.getLongitude(), location.getLatitude(), location.getCourtsImage(),
+//                location.getCourts()
+//        );
+
+        //Fara courts:
         return new LocationDTO(location.getId(), location.getAddress(),
-                location.getLongitude(), location.getLatitude(), location.getCourtsImage(),
-                location.getCourts()
+                location.getLongitude(), location.getLatitude(), location.getCourtsImage()
         );
     }
 

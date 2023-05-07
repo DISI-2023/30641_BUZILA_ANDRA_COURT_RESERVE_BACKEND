@@ -1,5 +1,12 @@
 package com.example._Buzila_Andra_Court_Reserve_Backend.controllers;
 
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddReservationDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.AddUserDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.GetAllReservationForUserDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.LocationDTO;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Court;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.Role;
+import com.example._Buzila_Andra_Court_Reserve_Backend.entities.User;
 import com.example._Buzila_Andra_Court_Reserve_Backend.config.RabbitSender;
 import com.example._Buzila_Andra_Court_Reserve_Backend.config.RabbitSender2;
 import com.example._Buzila_Andra_Court_Reserve_Backend.dtos.*;
@@ -13,10 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
@@ -28,6 +34,7 @@ public class ReservationController {
     private final UserService  userService;
     private final CourtService courtService;
     private final TariffService tariffService;
+
     @Autowired
     private RabbitSender2 rabbitSender2;
 
@@ -117,5 +124,16 @@ public class ReservationController {
 
         //Return ID if corect:
         return new ResponseEntity<ReturnPriceDTO>(returnPriceDTO, HttpStatus.OK);
+    }
+
+    //Get all reservations:
+    @GetMapping(value = "/getAllReservations" + "/{id}")
+    public ResponseEntity<List<GetAllReservationForUserDTO>> getAllReservationsForUser(@PathVariable("id") UUID userId)
+    {
+        //All reservations from DB, for that user:
+        List<GetAllReservationForUserDTO> allReservations = reservationService.findAllReservationsForUser(userId);
+
+        //Return all reservations:
+        return new ResponseEntity<>(allReservations, HttpStatus.OK);
     }
 }
