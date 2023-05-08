@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,5 +29,13 @@ public class TariffService {
         tariff = tariffRepository.save(tariff);
         LOGGER.debug("Tariff with id {} was inserted in db", tariff.getId());
         return tariff.getId();
+    }
+
+    public List<Tariff> findTariffsByLocation(Location location)
+    {
+        //Find courts by location:
+        List<Tariff> tariffsAtLocation = tariffRepository.findByLocation(location);
+
+        return tariffsAtLocation;
     }
 }
